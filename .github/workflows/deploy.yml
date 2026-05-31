@@ -1,16 +1,37 @@
-name: Deploy to GitHub Pages
+name: Deploy
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+      - develop
 
 jobs:
-  deploy:
+  deploy-prod:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
-      - name: Deploy
+      - name: Deploy to Production
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./
+          cname: oftel.com.au
+
+  deploy-dev:
+    if: github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy to Dev
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./
+          destination_dir: dev
+          cname: dev.oftel.com.au
